@@ -33,3 +33,20 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
+if uploaded_files:
+    for file in uploaded_files:
+        code = file.read().decode("utf-8", errors="ignore")
+        st.subheader(f"📄 File: {file.name}")
+        
+        with st.expander("View File Content"):
+            st.code(code, language="plaintext")
+
+        st.info("Requesting LLM analysis… please wait.")
+        prompt = (
+            "Analyze the following code for any malicious or phishing patterns. "
+            "Highlight obfuscation, unsafe use of user input, backdoors, "
+            "and suspicious logic.\n\n"
+            f"{code}"
+        )
+        analysis = call_llm(prompt)
+        st.markdown(f"### 🤖 LLM Analysis:\n{analysis}")
